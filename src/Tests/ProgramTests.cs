@@ -15,10 +15,10 @@ namespace TestCliProject.Tests
             // Arrange
             var output = new StringWriter();
             Console.SetOut(output);
-            
+
             // Act
             Program.Main(new[] { "--name", "Tester" }).Wait();
-            
+
             // Assert
             var outputString = output.ToString().Trim();
             Assert.Contains("Hello, Tester!", outputString);
