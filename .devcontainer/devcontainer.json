@@ -1,25 +1,33 @@
 {
     "name": "C# (.NET) Development",
     "dockerFile": "Dockerfile",
-    "settings": {
-        "terminal.integrated.shell.linux": "/bin/bash",
-        "editor.formatOnSave": true,
-        "omnisharp.enableRoslynAnalyzers": true,
-        "omnisharp.enableEditorConfigSupport": true,
-        "csharp.format.enable": true
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash",
+                "editor.formatOnSave": true,
+                "omnisharp.enableRoslynAnalyzers": true,
+                "omnisharp.enableEditorConfigSupport": true,
+                "csharp.format.enable": true
+            },
+            "extensions": [
+                "mads-hartmann.bash-ide-vscode",
+                "GitHub.copilot",
+                "ionutvmi.path-autocomplete",
+                "GitHub.vscode-pull-request-github",
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.vscode-dotnet-runtime",
+                "formulahendry.dotnet-test-explorer",
+                "editorconfig.editorconfig",
+                "ms-vscode.powershell",
+                "jmrog.vscode-nuget-package-manager",
+                "kreativ-software.csharpextensions",
+                "streetsidesoftware.code-spell-checker"
+            ]
+        }
     },
-    "extensions": [
-        "ms-dotnettools.csharp",
-        "ms-dotnettools.vscode-dotnet-runtime",
-        "formulahendry.dotnet-test-explorer",
-        "editorconfig.editorconfig",
-        "ms-vscode.powershell",
-        "jmrog.vscode-nuget-package-manager",
-        "kreativ-software.csharpextensions",
-        "streetsidesoftware.code-spell-checker"
-    ],
     "forwardPorts": [],
-    "postCreateCommand": "dotnet restore",
+    "postCreateCommand": "dotnet restore /workspaces/startfromrepo/TestCliProject/TestCliProject.csproj && dotnet restore /workspaces/startfromrepo/TestCliProject/Tests/TestCliProject.Tests.csproj",
     "remoteUser": "vscode",
     "features": {
         "ghcr.io/devcontainers/features/git:1": {
