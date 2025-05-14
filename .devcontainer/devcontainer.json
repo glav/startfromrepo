@@ -8,10 +8,22 @@
                 "editor.formatOnSave": true,
                 "omnisharp.enableRoslynAnalyzers": true,
                 "omnisharp.enableEditorConfigSupport": true,
-                "csharp.format.enable": true
+                "csharp.format.enable": true,
+                "files.insertFinalNewline": true,
+                "files.trimTrailingWhitespace": true,
+                "editor.tabSize": 2,
+                "json.schemas": [
+                    {
+                        "fileMatch": [
+                            "*/devcontainer-feature.json"
+                        ],
+                        "url": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainerFeature.schema.json"
+                    }
+                ]
             },
             "extensions": [
                 "mads-hartmann.bash-ide-vscode",
+                "ms-dotnettools.csdevkit",
                 "GitHub.copilot",
                 "ionutvmi.path-autocomplete",
                 "GitHub.vscode-pull-request-github",
@@ -27,7 +39,7 @@
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "dotnet restore /workspaces/startfromrepo/TestCliProject/TestCliProject.csproj && dotnet restore /workspaces/startfromrepo/TestCliProject/Tests/TestCliProject.Tests.csproj",
+    "postCreateCommand": "dotnet restore /workspaces/startfromrepo/src/TestCliProject/TestCliProject.csproj && dotnet restore /workspaces/startfromrepo/src/Tests/TestCliProject.Tests.csproj",
     "remoteUser": "vscode",
     "features": {
         "ghcr.io/devcontainers/features/git:1": {
