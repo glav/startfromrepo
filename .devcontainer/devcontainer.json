@@ -4,7 +4,6 @@
     "customizations": {
         "vscode": {
             "settings": {
-                "terminal.integrated.shell.linux": "/bin/bash",
                 "editor.formatOnSave": true,
                 "omnisharp.enableRoslynAnalyzers": true,
                 "omnisharp.enableEditorConfigSupport": true,
@@ -19,7 +18,8 @@
                         ],
                         "url": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainerFeature.schema.json"
                     }
-                ]
+                ],
+                "terminal.integrated.defaultProfile.linux": "zsh"
             },
             "extensions": [
                 "mads-hartmann.bash-ide-vscode",
@@ -39,11 +39,13 @@
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "dotnet restore /workspaces/startfromrepo/src/TestCliProject/TestCliProject.csproj && dotnet restore /workspaces/startfromrepo/src/Tests/TestCliProject.Tests.csproj",
+    "postCreateCommand": "chmod +x /workspaces/startfromrepo/.devcontainer/setup-zsh.sh && /workspaces/startfromrepo/.devcontainer/setup-zsh.sh && dotnet restore /workspaces/startfromrepo/src/TestCliProject/TestCliProject.csproj && dotnet restore /workspaces/startfromrepo/src/Tests/TestCliProject.Tests.csproj",
     "remoteUser": "vscode",
     "features": {
         "ghcr.io/devcontainers/features/git:1": {
             "version": "latest"
-        }
+        },
+        "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {},
+        "ghcr.io/devcontainers/features/azure-cli:1.2.7": {}
     }
 }

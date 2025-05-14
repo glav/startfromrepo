@@ -15,6 +15,7 @@ RUN apt-get update \
         wget \
         nano \
         procps \
+        zsh \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
@@ -32,6 +33,9 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# Set zsh as the default shell for the user
+RUN chsh -s /bin/zsh $USERNAME
 
 # Set the default user
 USER $USERNAME
