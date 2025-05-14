@@ -1,7 +1,8 @@
 using System;
 using System.CommandLine;
 using System.Threading.Tasks;
-using Octokit;
+using System.Diagnostics;
+using System.Text;
 
 namespace StartFromRepo
 {
@@ -39,12 +40,27 @@ namespace StartFromRepo
         Console.WriteLine($"Source repository: {source}");
         Console.WriteLine($"Destination repository: {destination}");
 
-        // GitHub authentication
-        var client = await AuthenticateGitHubAsync(username);
-        if (client != null)
+        // Check git credentials
+        if (await VerifyGitCredentialsAsync())
         {
-          Console.WriteLine("Successfully authenticated with GitHub!");
-          // Here you would add repository access functionality
+          Console.WriteLine("Successfully authenticated with GitHub using git credentials!");
+
+          // Clone repository
+          bool cloneSuccess = await CloneRepositoryAsync(username, source, destination);
+
+          if (cloneSuccess)
+          {
+            Console.WriteLine($"Successfully accessed the repository: {source}");
+            Console.WriteLine($"Cloned to: {destination}");
+          }
+          else
+          {
+            Console.WriteLine("Repository access failed. Please check your git credentials and repository permissions.");
+          }
+        }
+        else
+        {
+          Console.WriteLine("Git authentication failed. Please set up git credentials with 'git config' or SSH keys.");
         }
 
       }, usernameOption, sourceOption, destinationOption);
@@ -52,61 +68,108 @@ namespace StartFromRepo
       return await rootCommand.InvokeAsync(args);
     }
 
-    private static async Task<GitHubClient> AuthenticateGitHubAsync(string username)
+    // Verify that git credentials are working
+    private static async Task<bool> VerifyGitCredentialsAsync()
     {
       try
       {
-        var client = new GitHubClient(new ProductHeaderValue("StartFromRepo"));
+        // Run a simple git command that requires authentication
+        // Just checking the git config which should be available without authentication
+        string output = await ExecuteGitCommandAsync("config --get user.name");
 
-        Console.WriteLine($"Starting GitHub authentication for user: {username}");
-        Console.WriteLine("Please enter your GitHub Personal Access Token:");
-
-        // Hide the token input
-        string token = "";
-        ConsoleKeyInfo key;
-        do
+        if (!string.IsNullOrEmpty(output))
         {
-          key = Console.ReadKey(true);
-
-          if (key.Key != ConsoleKey.Enter && key.Key != ConsoleKey.Backspace)
-          {
-            token += key.KeyChar;
-            Console.Write("*");
-          }
-          else if (key.Key == ConsoleKey.Backspace && token.Length > 0)
-          {
-            token = token.Substring(0, token.Length - 1);
-            Console.Write("\b \b");
-          }
-        } while (key.Key != ConsoleKey.Enter);
-
-        Console.WriteLine();
-
-        if (string.IsNullOrEmpty(token))
-        {
-          Console.WriteLine("Authentication failed: No token provided.");
-          return null;
+          Console.WriteLine($"Git configured for user: {output.Trim()}");
+          return true;
         }
-
-        client.Credentials = new Credentials(token);
-
-        try
-        {
-          // Verify that the authentication worked
-          var user = await client.User.Current();
-          Console.WriteLine($"Successfully authenticated as {user.Login}");
-          return client;
-        }
-        catch (AuthorizationException)
-        {
-          Console.WriteLine("Authentication failed: Invalid token.");
-          return null;
-        }
+        return false;
       }
       catch (Exception ex)
       {
-        Console.WriteLine($"Authentication error: {ex.Message}");
-        return null;
+        Console.WriteLine($"Error verifying git credentials: {ex.Message}");
+        return false;
+      }
+    }
+
+    // Clone repository from source to destination
+    private static async Task<bool> CloneRepositoryAsync(string username, string source, string destination)
+    {
+      try
+      {
+        // Determine if source repository contains a username
+        string sourceRepo = source;
+        if (!source.Contains("/"))
+        {
+          sourceRepo = $"{username}/{source}";
+        }
+
+        // Execute git clone command
+        string output = await ExecuteGitCommandAsync($"clone https://github.com/{sourceRepo}.git {destination}");
+
+        // Check if the clone was successful
+        return !output.Contains("fatal:") && !output.Contains("error:");
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"Error cloning repository: {ex.Message}");
+        return false;
+      }
+    }
+
+    // Execute a git command and return the output
+    private static async Task<string> ExecuteGitCommandAsync(string arguments)
+    {
+      try
+      {
+        var process = new Process
+        {
+          StartInfo = new ProcessStartInfo
+          {
+            FileName = "git",
+            Arguments = arguments,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+          }
+        };
+
+        StringBuilder output = new StringBuilder();
+        StringBuilder error = new StringBuilder();
+
+        process.OutputDataReceived += (sender, e) =>
+        {
+          if (!string.IsNullOrEmpty(e.Data))
+          {
+            output.AppendLine(e.Data);
+          }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+          if (!string.IsNullOrEmpty(e.Data))
+          {
+            error.AppendLine(e.Data);
+          }
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        await process.WaitForExitAsync();
+
+        string result = output.ToString();
+        if (string.IsNullOrEmpty(result))
+        {
+          result = error.ToString();
+        }
+
+        return result;
+      }
+      catch (Exception ex)
+      {
+        return $"Error executing git command: {ex.Message}";
       }
     }
   }

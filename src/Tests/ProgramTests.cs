@@ -4,24 +4,26 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using System.Diagnostics;
 
 namespace StartFromRepo.Tests
 {
     public class ProgramTests
     {
         [Fact]
-        public void TestCommandLineParameters()
+        public async Task TestCommandLineParameters()
         {
             // Arrange
             var output = new StringWriter();
             Console.SetOut(output);
 
             // Act
-            Program.Main(new[] {
+            await Program.Main(new[] {
                 "--username", "testuser",
                 "--source", "source-repo",
                 "--destination", "dest-repo"
-            }).Wait();
+            });
+            await Task.CompletedTask;
 
             // Assert
             var outputString = output.ToString().Trim();
@@ -30,19 +32,18 @@ namespace StartFromRepo.Tests
             Assert.Contains("Destination repository: dest-repo", outputString);
         }
 
-        [Fact]
-        public void TestCommandLineParametersWithShortNames()
+        public async Task TestCommandLineParametersWithShortNames()
         {
             // Arrange
             var output = new StringWriter();
             Console.SetOut(output);
 
             // Act
-            Program.Main(new[] {
+            await Program.Main(new[] {
                 "-u", "testuser",
                 "-s", "source-repo",
                 "-d", "dest-repo"
-            }).Wait();
+            });
 
             // Assert
             var outputString = output.ToString().Trim();
