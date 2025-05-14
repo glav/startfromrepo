@@ -1,0 +1,29 @@
+{
+    "name": "C# (.NET) Development",
+    "dockerFile": "Dockerfile",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "editor.formatOnSave": true,
+        "omnisharp.enableRoslynAnalyzers": true,
+        "omnisharp.enableEditorConfigSupport": true,
+        "csharp.format.enable": true
+    },
+    "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "formulahendry.dotnet-test-explorer",
+        "editorconfig.editorconfig",
+        "ms-vscode.powershell",
+        "jmrog.vscode-nuget-package-manager",
+        "kreativ-software.csharpextensions",
+        "streetsidesoftware.code-spell-checker"
+    ],
+    "forwardPorts": [],
+    "postCreateCommand": "dotnet restore",
+    "remoteUser": "vscode",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest"
+        }
+    }
+}
