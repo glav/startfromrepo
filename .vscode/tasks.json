@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/TestCliProject/TestCliProject.csproj",
+                "${workspaceFolder}/src/StartFromRepo/StartFromRepo.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/src/TestCliProject/TestCliProject.csproj",
+                "${workspaceFolder}/src/StartFromRepo/StartFromRepo.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/src/TestCliProject/TestCliProject.csproj"
+                "${workspaceFolder}/src/StartFromRepo/StartFromRepo.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

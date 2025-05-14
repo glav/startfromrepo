@@ -1,5 +1,27 @@
-# startfromrepo
-A tool that can start a new GH project using another repo as a basis or template.
+# StartFromRepo
+A tool that can start a new GitHub project using another repo as a basis or template.
+
+## Usage
+
+```bash
+dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- --username <github-username> --source <source-repo> --destination <destination-repo>
+```
+
+Or using the short form:
+
+```bash
+dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- -u <github-username> -s <source-repo> -d <destination-repo>
+```
+
+### Parameters
+
+- `--username` or `-u`: Your GitHub username
+- `--source` or `-s`: Source repository name to copy from
+- `--destination` or `-d`: Destination repository name to create
+
+### Authentication
+
+The app uses interactive authentication with a GitHub Personal Access Token. When prompted, enter your GitHub token to authenticate.
 
 ## .NET C# Development Environment
 

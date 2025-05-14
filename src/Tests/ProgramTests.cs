@@ -5,24 +5,50 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace TestCliProject.Tests
+namespace StartFromRepo.Tests
 {
     public class ProgramTests
     {
         [Fact]
-        public void TestHelloCommand()
+        public void TestCommandLineParameters()
         {
             // Arrange
             var output = new StringWriter();
             Console.SetOut(output);
 
             // Act
-            Program.Main(new[] { "--name", "Tester" }).Wait();
+            Program.Main(new[] {
+                "--username", "testuser",
+                "--source", "source-repo",
+                "--destination", "dest-repo"
+            }).Wait();
 
             // Assert
             var outputString = output.ToString().Trim();
-            Assert.Contains("Hello, Tester!", outputString);
-            Assert.Contains("This is a sample .NET CLI tool", outputString);
+            Assert.Contains("Username: testuser", outputString);
+            Assert.Contains("Source repository: source-repo", outputString);
+            Assert.Contains("Destination repository: dest-repo", outputString);
+        }
+
+        [Fact]
+        public void TestCommandLineParametersWithShortNames()
+        {
+            // Arrange
+            var output = new StringWriter();
+            Console.SetOut(output);
+
+            // Act
+            Program.Main(new[] {
+                "-u", "testuser",
+                "-s", "source-repo",
+                "-d", "dest-repo"
+            }).Wait();
+
+            // Assert
+            var outputString = output.ToString().Trim();
+            Assert.Contains("Username: testuser", outputString);
+            Assert.Contains("Source repository: source-repo", outputString);
+            Assert.Contains("Destination repository: dest-repo", outputString);
         }
     }
 }
