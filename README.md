@@ -1,6 +1,8 @@
 # StartFromRepo
 A tool that can start a new GitHub project using another repo as a basis or template.
 
+**NOTE: WIP - NOT COMPLETE -**
+
 ## Usage
 
 ```bash
