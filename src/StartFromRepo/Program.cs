@@ -1,16 +1,65 @@
 using System;
 using System.CommandLine;
 using System.Threading.Tasks;
-using Octokit;
+using System.Diagnostics;
+using System.Text;
+using System.Reflection.Metadata.Ecma335;
+using System.CommandLine.Invocation;
 
 namespace StartFromRepo
 {
   public class Program
   {
+    // The options available on the command line
+    const string USEROPTIONTEXT = "username";
+    const string SOURCEOPTIONTEXT = "source";
+    const string DESTINATIONOPTIONTEXT = "destination";
+
     public static async Task<int> Main(string[] args)
     {
-      var rootCommand = new RootCommand("GitHub repository tool");
+      var rootCommand = CreateCommandLineOptions();
 
+      rootCommand.SetHandler(async (context) =>
+      {
+        var username = GetOption(rootCommand, context, USEROPTIONTEXT);
+        var source = GetOption(rootCommand, context, SOURCEOPTIONTEXT);
+        var destination = GetOption(rootCommand, context, DESTINATIONOPTIONTEXT);
+
+        Console.WriteLine($"Username: {username}");
+        Console.WriteLine($"Source repository: {source}");
+        Console.WriteLine($"Destination repository: {destination}");
+
+        // Check git credentials
+        if (await GitCliUtility.VerifyGitCredentialsAsync())
+        {
+          Console.WriteLine("Successfully authenticated with GitHub using git credentials!");
+
+          // Clone repository
+          bool cloneSuccess = await GitCliUtility.CloneRepositoryAsync(username, source, destination);
+
+          if (cloneSuccess)
+          {
+            Console.WriteLine($"Successfully accessed the repository: {source}");
+            Console.WriteLine($"Cloned to: {destination}");
+          }
+          else
+          {
+            Console.WriteLine("Repository access failed. Please check your git credentials and repository permissions.");
+          }
+        }
+        else
+        {
+          Console.WriteLine("Git authentication failed. Please set up git credentials with 'git config' or SSH keys.");
+        }
+
+      });
+
+      return await rootCommand.InvokeAsync(args);
+    }
+
+    private static RootCommand CreateCommandLineOptions()
+    {
+      var rootCommand = new RootCommand("GitHub repository tool");
       var usernameOption = new Option<string>(
           "--username",
           "GitHub username");
@@ -33,81 +82,20 @@ namespace StartFromRepo
       rootCommand.AddOption(sourceOption);
       rootCommand.AddOption(destinationOption);
 
-      rootCommand.SetHandler(async (username, source, destination) =>
-      {
-        Console.WriteLine($"Username: {username}");
-        Console.WriteLine($"Source repository: {source}");
-        Console.WriteLine($"Destination repository: {destination}");
-
-        // GitHub authentication
-        var client = await AuthenticateGitHubAsync(username);
-        if (client != null)
-        {
-          Console.WriteLine("Successfully authenticated with GitHub!");
-          // Here you would add repository access functionality
-        }
-
-      }, usernameOption, sourceOption, destinationOption);
-
-      return await rootCommand.InvokeAsync(args);
+      return rootCommand;
     }
 
-    private static async Task<GitHubClient> AuthenticateGitHubAsync(string username)
+
+    static string GetOption(RootCommand rootCommand, InvocationContext context, string name)
     {
-      try
+      var option = rootCommand.Options.FirstOrDefault(o => o.Name == name);
+      if (option == null)
       {
-        var client = new GitHubClient(new ProductHeaderValue("StartFromRepo"));
-
-        Console.WriteLine($"Starting GitHub authentication for user: {username}");
-        Console.WriteLine("Please enter your GitHub Personal Access Token:");
-
-        // Hide the token input
-        string token = "";
-        ConsoleKeyInfo key;
-        do
-        {
-          key = Console.ReadKey(true);
-
-          if (key.Key != ConsoleKey.Enter && key.Key != ConsoleKey.Backspace)
-          {
-            token += key.KeyChar;
-            Console.Write("*");
-          }
-          else if (key.Key == ConsoleKey.Backspace && token.Length > 0)
-          {
-            token = token.Substring(0, token.Length - 1);
-            Console.Write("\b \b");
-          }
-        } while (key.Key != ConsoleKey.Enter);
-
-        Console.WriteLine();
-
-        if (string.IsNullOrEmpty(token))
-        {
-          Console.WriteLine("Authentication failed: No token provided.");
-          return null;
-        }
-
-        client.Credentials = new Credentials(token);
-
-        try
-        {
-          // Verify that the authentication worked
-          var user = await client.User.Current();
-          Console.WriteLine($"Successfully authenticated as {user.Login}");
-          return client;
-        }
-        catch (AuthorizationException)
-        {
-          Console.WriteLine("Authentication failed: Invalid token.");
-          return null;
-        }
+        throw new ArgumentException($"Option '{name}' not found in the command.");
       }
-      catch (Exception ex)
-      {
-        Console.WriteLine($"Authentication error: {ex.Message}");
-        return null;
-      }
+      var optionValue = context.ParseResult.GetValueForOption<string>((Option<string>)option);
+      return optionValue ?? string.Empty;
+
     }
   }
 }

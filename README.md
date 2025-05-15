@@ -21,7 +21,13 @@ dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- -u <github-userna
 
 ### Authentication
 
-The app uses interactive authentication with a GitHub Personal Access Token. When prompted, enter your GitHub token to authenticate.
+The application utilizes your existing git credentials for GitHub authentication. Make sure you have configured git with your GitHub credentials using either:
+
+1. SSH keys: `git config --global user.name "Your Name"` and `git config --global user.email "your.email@example.com"`
+2. Git credential manager
+3. GitHub CLI (`gh`) authentication
+
+No additional authentication setup is required.
 
 ## .NET C# Development Environment
 
