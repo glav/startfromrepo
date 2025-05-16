@@ -35,7 +35,7 @@ dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- -u <github-userna
 - `--username` or `-u`: Your GitHub username
 - `--source` or `-s`: Source repository name to copy from
 - `--destination` or `-d`: Destination repository name to create
-- `--push` or `-p`: Push code to GitHub repository after cloning (optional, defaults to false)
+- `--push` or `-p`: Push code to GitHub repository after cloning - Github repo needs to be a manually created empty repo (optional, defaults to false)
 
 ### Authentication
 
