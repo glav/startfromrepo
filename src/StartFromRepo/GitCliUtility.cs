@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,6 +48,16 @@ namespace StartFromRepo
 
                 // Check if the clone was successful
                 bool cloneSuccess = !output.Contains("fatal:") && !output.Contains("error:");
+
+                // Print debug output
+                Console.WriteLine($"Debug - Clone output: {output}");
+
+                // Check if destination directory exists to confirm clone success
+                if (!Directory.Exists(destination))
+                {
+                    Console.WriteLine($"Debug - Destination directory {destination} does not exist");
+                    cloneSuccess = false;
+                }
 
                 // If clone was successful, change the origin to the new repository
                 if (cloneSuccess)
@@ -121,6 +132,61 @@ namespace StartFromRepo
             catch (Exception ex)
             {
                 Console.WriteLine($"Error changing git origin: {ex.Message}");
+                return false;
+            }
+        }
+
+        public static async Task<bool> CheckRepositoryExistsAsync(string username, string repositoryName)
+        {
+            try
+            {
+                // Use git ls-remote to check if the repository exists and is accessible
+                string output = await ExecuteGitCommandAsync($"ls-remote https://github.com/{username}/{repositoryName}.git");
+
+                // If the repository doesn't exist, the command will return an error message
+                if (output.Contains("repository not found") ||
+                    output.Contains("fatal:") ||
+                    output.Contains("error:"))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LoggingUtility.LogError($"Error checking repository existence: {ex.Message}");
+                return false;
+            }
+        }
+
+        public static async Task<bool> PushCodeToRepositoryAsync(string destinationDir)
+        {
+            try
+            {
+                // Make sure we're in the right directory
+                if (!Directory.Exists(destinationDir))
+                {
+                    LoggingUtility.LogError($"Destination directory {destinationDir} does not exist");
+                    return false;
+                }
+
+                // Execute git push command with -u flag to track the branch
+                string output = await ExecuteGitCommandAsync($"-C {destinationDir} push -u origin main");
+
+                // Check if the push was successful
+                if (output.Contains("fatal:") || output.Contains("error:"))
+                {
+                    LoggingUtility.LogError($"Push failed: {output}");
+                    return false;
+                }
+
+                LoggingUtility.LogInfo("Successfully pushed code to GitHub repository");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LoggingUtility.LogError($"Error pushing code to repository: {ex.Message}");
                 return false;
             }
         }
