@@ -23,7 +23,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/packages.config', '**/*.csproj') }}
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', '**/packages.config', '**/*.csproj', '**/global.json', '**/Directory.Build.props', '**/Directory.Build.targets', '**/.editorconfig') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
 
