@@ -31,7 +31,6 @@ namespace StartFromRepo
             }
         }
 
-
         public static async Task<bool> CloneRepositoryAsync(string username, string source, string destination)
         {
             try
@@ -47,7 +46,19 @@ namespace StartFromRepo
                 string output = await ExecuteGitCommandAsync($"clone https://github.com/{sourceRepo}.git {destination}");
 
                 // Check if the clone was successful
-                return !output.Contains("fatal:") && !output.Contains("error:");
+                bool cloneSuccess = !output.Contains("fatal:") && !output.Contains("error:");
+
+                // If clone was successful, change the origin to the new repository
+                if (cloneSuccess)
+                {
+                    bool originChangeSuccess = await ChangeGitOriginAsync(username, destination, destination);
+                    if (!originChangeSuccess)
+                    {
+                        Console.WriteLine("Warning: Repository was cloned but failed to change the origin to the new repository.");
+                    }
+                }
+
+                return cloneSuccess;
             }
             catch (Exception ex)
             {
@@ -55,6 +66,65 @@ namespace StartFromRepo
                 return false;
             }
         }
+
+        public static async Task<bool> ChangeGitOriginAsync(string username, string repositoryName, string workingDirectory)
+        {
+            try
+            {
+                // Format the new GitHub URL
+                string newOriginUrl = $"https://github.com/{username}/{repositoryName}.git";
+
+                // Execute git remote set-url command in the working directory
+                string command = $"-C {workingDirectory} remote set-url origin {newOriginUrl}";
+
+                // For a new repository that doesn't have a remote yet, first add it
+                string checkRemoteOutput = await ExecuteGitCommandAsync($"-C {workingDirectory} remote");
+                if (string.IsNullOrEmpty(checkRemoteOutput))
+                {
+                    await ExecuteGitCommandAsync($"-C {workingDirectory} remote add origin {newOriginUrl}");
+                }
+                else
+                {
+                    // Change the existing remote URL
+                    string output = await ExecuteGitCommandAsync(command);
+
+                    // Check if the command failed
+                    if (output.Contains("fatal:") || output.Contains("error:"))
+                    {
+                        Console.WriteLine($"Error changing git origin: {output}");
+                        return false;
+                    }
+                }
+
+                // Ensure the main branch is named 'main'
+                string currentBranchOutput = await ExecuteGitCommandAsync($"-C {workingDirectory} rev-parse --abbrev-ref HEAD");
+                string currentBranch = currentBranchOutput.Trim();
+
+                if (!string.IsNullOrEmpty(currentBranch) && currentBranch != "main")
+                {
+                    // Rename the branch to 'main'
+                    string renameBranchOutput = await ExecuteGitCommandAsync($"-C {workingDirectory} branch -m {currentBranch} main");
+
+                    if (renameBranchOutput.Contains("fatal:") || renameBranchOutput.Contains("error:"))
+                    {
+                        Console.WriteLine($"Warning: Could not rename branch to 'main': {renameBranchOutput}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Default branch renamed from '{currentBranch}' to 'main'");
+                    }
+                }
+
+                Console.WriteLine($"Git origin updated to: {newOriginUrl}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error changing git origin: {ex.Message}");
+                return false;
+            }
+        }
+
         public static async Task<string> ExecuteGitCommandAsync(string arguments)
         {
             try

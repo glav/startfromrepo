@@ -41,6 +41,11 @@ namespace StartFromRepo
           {
             Console.WriteLine($"Successfully accessed the repository: {source}");
             Console.WriteLine($"Cloned to: {destination}");
+            Console.WriteLine($"Remote origin set to: https://github.com/{username}/{destination}.git");
+            Console.WriteLine($"Default branch renamed to 'main'");
+            Console.WriteLine($"You can now push changes to your new repository with:");
+            Console.WriteLine($"  cd {destination}");
+            Console.WriteLine($"  git push -u origin main");
           }
           else
           {
