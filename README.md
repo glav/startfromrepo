@@ -1,6 +1,9 @@
 # StartFromRepo
 A tool that can start a new GitHub project using another repo as a basis or template.
 
+## Why?
+I often create a repository that has a .devcontainer setup, scripts ready to go and other utilities that I want to re-use. I often clone it, copy the items over or manually set the new origin, etc. This tool does all that for you in one step. That may, you can maintain a few repos you like as a base to start working with, and get going with those really quickly.
+
 **NOTE: WIP - NOT COMPLETE -**
 
 ## Usage
@@ -9,10 +12,22 @@ A tool that can start a new GitHub project using another repo as a basis or temp
 dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- --username <github-username> --source <source-repo> --destination <destination-repo>
 ```
 
+With push option:
+
+```bash
+dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- --username <github-username> --source <source-repo> --destination <destination-repo> --push
+```
+
 Or using the short form:
 
 ```bash
 dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- -u <github-username> -s <source-repo> -d <destination-repo>
+```
+
+Short form with push option:
+
+```bash
+dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- -u <github-username> -s <source-repo> -d <destination-repo> -p
 ```
 
 ### Parameters
@@ -20,6 +35,7 @@ dotnet run --project src/StartFromRepo/StartFromRepo.csproj -- -u <github-userna
 - `--username` or `-u`: Your GitHub username
 - `--source` or `-s`: Source repository name to copy from
 - `--destination` or `-d`: Destination repository name to create
+- `--push` or `-p`: Push code to GitHub repository after cloning (optional, defaults to false)
 
 ### Authentication
 

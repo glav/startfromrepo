@@ -10,6 +10,12 @@ namespace StartFromRepo.Tests
 {
   public class GitTests
   {
+    // Helper method that calls the async method but returns synchronously
+    private string ExecuteGitCommand(string arguments)
+    {
+      return GitCliUtility.ExecuteGitCommandAsync(arguments).GetAwaiter().GetResult();
+    }
+
     [Fact]
     public void TestGitCommandExecution()
     {
@@ -88,34 +94,6 @@ namespace StartFromRepo.Tests
         {
           Directory.Delete(tempDir, true);
         }
-      }
-    }
-
-    private string ExecuteGitCommand(string arguments)
-    {
-      try
-      {
-        var process = new Process
-        {
-          StartInfo = new ProcessStartInfo
-          {
-            FileName = "git",
-            Arguments = arguments,
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-          }
-        };
-
-        process.Start();
-        string result = process.StandardOutput.ReadToEnd();
-        process.WaitForExit();
-
-        return result;
-      }
-      catch (Exception ex)
-      {
-        return $"Error executing git command: {ex.Message}";
       }
     }
   }
