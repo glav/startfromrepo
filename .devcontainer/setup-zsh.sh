@@ -137,53 +137,58 @@ cat > $HOME/.p10k.zsh << 'EOL'
   unset -m '(POWERLEVEL9K_*|DEFAULT_USER)~POWERLEVEL9K_GITSTATUS_DIR'
 
   # Left prompt segments
+#   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+#     # Line 1
+#     dir                     # current directory
+#     vcs                     # git status
+#     # Line 2
+#     newline                 # \n
+#     prompt_char             # prompt symbol
+#   )
+
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
-    # Line 1
     dir                     # current directory
     vcs                     # git status
-    # Line 2
-    newline                 # \n
-    prompt_char             # prompt symbol
   )
 
   # Right prompt segments
-  typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
-    # Line 1
-    status                  # exit code of the last command
-    command_execution_time  # duration of the last command
-    background_jobs         # presence of background jobs
-    direnv                  # direnv status
-    asdf                    # asdf version manager
-    virtualenv              # python virtual environment
-    anaconda                # conda environment
-    pyenv                   # python environment
-    nodenv                  # node.js version from nodenv
-    nvm                     # node.js version from nvm
-    nodeenv                 # node.js environment
-    dotnet_version          # .net version
-    # Line 2
-    newline
-    # Empty line
-  )
+  # typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+  #   # Line 1
+  #   status                  # exit code of the last command
+  #   command_execution_time  # duration of the last command
+  #   background_jobs         # presence of background jobs
+  #   direnv                  # direnv status
+  #   asdf                    # asdf version manager
+  #   virtualenv              # python virtual environment
+  #   anaconda                # conda environment
+  #   pyenv                   # python environment
+  #   nodenv                  # node.js version from nodenv
+  #   nvm                     # node.js version from nvm
+  #   nodeenv                 # node.js environment
+  #   dotnet_version          # .net version
+  #   # Line 2
+  #   newline
+  #   # Empty line
+  # )
 
   # Basic style options
-  typeset -g POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+  typeset -g POWERLEVEL9K_PROMPT_ON_NEWLINE=false
   typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=''
   typeset -g POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX='%F{blue}❯%f '
 
   # Directory styling
-  typeset -g POWERLEVEL9K_DIR_BACKGROUND='blue'
-  typeset -g POWERLEVEL9K_DIR_FOREGROUND='black'
+  typeset -g POWERLEVEL9K_DIR_BACKGROUND='none'
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND='white'
   typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_unique
   typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
 
   # VCS (Git) styling
   typeset -g POWERLEVEL9K_VCS_CLEAN_BACKGROUND='green'
-  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND='black'
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='yellow'
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='black'
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND='magenta'
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND='black'
+  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND='white'
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='blue'
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='white'
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND='red'
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND='white'
 
   # Command execution time
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD=3
@@ -196,6 +201,7 @@ cat > $HOME/.p10k.zsh << 'EOL'
   typeset -g POWERLEVEL9K_STATUS_ERROR_FOREGROUND='white'
 
   # Prompt character (used when ready to take input)
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS,VIOWR}_BACKGROUND='none'
   typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND='green'
   typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND='red'
 
