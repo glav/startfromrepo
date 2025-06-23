@@ -39,7 +39,7 @@
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "chmod +x /workspaces/startfromrepo/.devcontainer/setup-zsh.sh && /workspaces/startfromrepo/.devcontainer/setup-zsh.sh && dotnet restore /workspaces/startfromrepo/src/TestCliProject/TestCliProject.csproj && dotnet restore /workspaces/startfromrepo/src/Tests/TestCliProject.Tests.csproj",
+    "postCreateCommand": "chmod +x /workspaces/startfromrepo/.devcontainer/setup-zsh.sh && /workspaces/startfromrepo/.devcontainer/setup-zsh.sh && dotnet restore /workspaces/startfromrepo/src/TestCliProject/TestCliProject.csproj && dotnet restore /workspaces/startfromrepo/src/Tests/TestCliProject.Tests.csproj && bash .devcontainer/post-script.sh",
     "remoteUser": "vscode",
     "features": {
         "ghcr.io/devcontainers/features/git:1": {
