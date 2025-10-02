@@ -177,7 +177,7 @@ cat > $HOME/.p10k.zsh << 'EOL'
   typeset -g POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX='%F{blue}❯%f '
 
   # Directory styling
-  typeset -g POWERLEVEL9K_DIR_BACKGROUND='none'
+  typeset -g POWERLEVEL9K_DIR_BACKGROUND='purple'
   typeset -g POWERLEVEL9K_DIR_FOREGROUND='white'
   typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_unique
   typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=3

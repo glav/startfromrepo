@@ -1,6 +1,10 @@
 {
     "name": "C# (.NET) Development",
     "dockerFile": "Dockerfile",
+    "runArgs": [
+        "--network=host"
+    ],
+    // "image": "mcr.microsoft.com/dotnet/sdk:9.0",
     "customizations": {
         "vscode": {
             "settings": {
@@ -39,13 +43,11 @@
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "chmod +x /workspaces/startfromrepo/.devcontainer/setup-zsh.sh && /workspaces/startfromrepo/.devcontainer/setup-zsh.sh && dotnet restore /workspaces/startfromrepo/src/TestCliProject/TestCliProject.csproj && dotnet restore /workspaces/startfromrepo/src/Tests/TestCliProject.Tests.csproj && bash .devcontainer/post-script.sh",
+    "postCreateCommand": "chmod +x .devcontainer/setup-zsh.sh && .devcontainer/setup-zsh.sh && dotnet restore ./src && dotnet build ./src  && bash .devcontainer/post-script.sh",
     "remoteUser": "vscode",
-    "features": {
-        "ghcr.io/devcontainers/features/git:1": {
-            "version": "latest"
-        },
-        "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {},
-        "ghcr.io/devcontainers/features/azure-cli:1.2.7": {}
+    "containerEnv": {
+        "DOTNET_SKIP_FIRST_TIME_EXPERIENCE": "true",
+        "DOTNET_NOLOGO": "true",
+        "DOTNET_CLI_TELEMETRY_OPTOUT": "true"
     }
 }
