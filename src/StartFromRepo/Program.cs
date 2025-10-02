@@ -1,10 +1,9 @@
 using System;
 using System.CommandLine;
+using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Text;
-using System.Reflection.Metadata.Ecma335;
-using System.CommandLine.Invocation;
 
 namespace StartFromRepo
 {
@@ -18,19 +17,49 @@ namespace StartFromRepo
 
     public static async Task<int> Main(string[] args)
     {
-      var rootCommand = CreateCommandLineOptions();
-
-      rootCommand.SetHandler(async (context) =>
+      var usernameOption = new Option<string>("--username", "-u")
       {
-        var username = GetOption(rootCommand, context, USEROPTIONTEXT);
-        var source = GetOption(rootCommand, context, SOURCEOPTIONTEXT);
-        var destination = GetOption(rootCommand, context, DESTINATIONOPTIONTEXT);
-        var pushOption = GetTypedOption<bool>(rootCommand, context, PUSHOPTIONTEXT);
+        Description = "GitHub username",
+        Required = true
+      };
+
+      var sourceOption = new Option<string>("--source", "-s")
+      {
+        Description = "Source repository name",
+        Required = true
+      };
+
+      var destinationOption = new Option<string>("--destination", "-d")
+      {
+        Description = "Destination repository name",
+        Required = true
+      };
+
+      var pushOption = new Option<bool>("--push", "-p")
+      {
+        Description = "Push code to GitHub repository after cloning",
+        DefaultValueFactory = _ => false
+      };
+
+      var rootCommand = new RootCommand("GitHub repository tool")
+      {
+        usernameOption,
+        sourceOption,
+        destinationOption,
+        pushOption
+      };
+
+      rootCommand.SetAction(async (parseResult) =>
+      {
+        var username = parseResult.GetValue(usernameOption)!;
+        var source = parseResult.GetValue(sourceOption)!;
+        var destination = parseResult.GetValue(destinationOption)!;
+        var push = parseResult.GetValue(pushOption);
 
         LoggingUtility.LogInfo($"Username: {username}");
         LoggingUtility.LogInfo($"Source repository: {source}");
         LoggingUtility.LogInfo($"Destination repository: {destination}");
-        if (pushOption)
+        if (push)
         {
           LoggingUtility.LogInfo("Push flag is enabled: Will attempt to push to GitHub after cloning");
         }
@@ -54,7 +83,7 @@ namespace StartFromRepo
             LoggingUtility.LogInfo($"Default branch renamed to 'main'");
 
             // Handle push flag if enabled
-            if (pushOption)
+            if (push)
             {
               LoggingUtility.LogInfo("Checking if destination repository exists on GitHub...");
               bool repoExists = await GitCliUtility.CheckRepositoryExistsAsync(username, destination);
@@ -101,64 +130,7 @@ namespace StartFromRepo
 
       });
 
-      return await rootCommand.InvokeAsync(args);
-    }
-
-    private static RootCommand CreateCommandLineOptions()
-    {
-      var rootCommand = new RootCommand("GitHub repository tool");
-      var usernameOption = new Option<string>(
-          "--username",
-          "GitHub username");
-      usernameOption.AddAlias("-u");
-      usernameOption.IsRequired = true;
-
-      var sourceOption = new Option<string>(
-          "--source",
-          "Source repository name");
-      sourceOption.AddAlias("-s");
-      sourceOption.IsRequired = true;
-
-      var destinationOption = new Option<string>(
-          "--destination",
-          "Destination repository name");
-      destinationOption.AddAlias("-d");
-      destinationOption.IsRequired = true;
-
-      var pushOption = new Option<bool>(
-          "--push",
-          "Push code to GitHub repository after cloning");
-      pushOption.AddAlias("-p");
-      pushOption.SetDefaultValue(false);
-
-      rootCommand.AddOption(usernameOption);
-      rootCommand.AddOption(sourceOption);
-      rootCommand.AddOption(destinationOption);
-      rootCommand.AddOption(pushOption);
-
-      return rootCommand;
-    }
-
-
-    static string GetOption(RootCommand rootCommand, InvocationContext context, string name)
-    {
-      var option = rootCommand.Options.FirstOrDefault(o => o.Name == name);
-      if (option == null)
-      {
-        throw new ArgumentException($"Option '{name}' not found in the command.");
-      }
-      var optionValue = context.ParseResult.GetValueForOption<string>((Option<string>)option);
-      return optionValue ?? string.Empty;
-    }
-
-    static T GetTypedOption<T>(RootCommand rootCommand, InvocationContext context, string name)
-    {
-      var option = rootCommand.Options.FirstOrDefault(o => o.Name == name);
-      if (option == null)
-      {
-        throw new ArgumentException($"Option '{name}' not found in the command.");
-      }
-      return context.ParseResult.GetValueForOption<T>((Option<T>)option);
+      return await rootCommand.Parse(args).InvokeAsync();
     }
   }
 }
