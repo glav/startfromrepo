@@ -10,11 +10,6 @@ namespace StartFromRepo
   public class Program
   {
     // The options available on the command line
-    const string USEROPTIONTEXT = "username";
-    const string SOURCEOPTIONTEXT = "source";
-    const string DESTINATIONOPTIONTEXT = "destination";
-    const string PUSHOPTIONTEXT = "push";
-
     public static async Task<int> Main(string[] args)
     {
       var usernameOption = new Option<string>("--username", "-u")
