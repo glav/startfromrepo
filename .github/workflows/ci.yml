@@ -31,7 +31,7 @@ jobs:
       run: dotnet restore src/StartFromRepo.sln
 
     - name: Build
-      run: dotnet build src/StartFromRepo.sln --configuration Release --no-restore
+      run: dotnet build src/startfromrepo.sln --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test src/Tests/StartFromRepo.Tests.csproj --configuration Release --no-build --verbosity normal
+      run: dotnet test src/Tests/startfromrepo.Tests.csproj --configuration Release --no-build --verbosity normal
