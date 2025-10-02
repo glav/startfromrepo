@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartFromRepo", "StartFromRepo\StartFromRepo.csproj", "{B9B4563C-E195-491D-A39C-68A8D8C4E2C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "startfromrepo", "startfromrepo\startfromrepo.csproj", "{B9B4563C-E195-491D-A39C-68A8D8C4E2C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartFromRepo.Tests", "Tests\StartFromRepo.Tests.csproj", "{075ECB67-B2EA-4F34-B148-FF1CDD04041A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "startfromrepo.Tests", "Tests\startfromrepo.Tests.csproj", "{075ECB67-B2EA-4F34-B148-FF1CDD04041A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
